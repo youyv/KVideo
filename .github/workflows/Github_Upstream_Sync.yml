@@ -4,7 +4,7 @@ env:
   UPSTREAM_REPO: KuekHaoYang/KVideo
   UPSTREAM_BRANCH: main
   TARGET_BRANCH: main
-  SYNC_BRANCH: upstream-sync-conflict # The branch name used if a conflict occurs
+  SYNC_BRANCH: upstream-sync-conflict
 
 on:
   schedule:
@@ -25,11 +25,10 @@ jobs:
       - name: Checkout target repo
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Required to access full history for merging
+          fetch-depth: 0
+          token: ${{ secrets.GH_PAT }}
 
       - name: Sync and Merge (with PR Fallback)
-        env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           # 1. Configure Git
           git config user.name "github-actions[bot]"
@@ -54,7 +53,6 @@ jobs:
             git push -f origin $SYNC_BRANCH
 
             # 5. Create Pull Request using GitHub CLI
-            # The '|| true' prevents failure if the PR already exists
             gh pr create \
               --title "🚨 Manual Sync Required: Conflicts with Upstream" \
               --body "The automatic sync failed due to merge conflicts. This PR contains the latest upstream changes. Please resolve conflicts and merge manually." \
