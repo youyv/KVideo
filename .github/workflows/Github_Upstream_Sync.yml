@@ -37,10 +37,10 @@ jobs:
           git fetch upstream
 
           echo "Attempting to rebase onto upstream/$UPSTREAM_BRANCH..."
-          
+
           if git pull --rebase upstream $UPSTREAM_BRANCH; then
             echo "✅ Rebase successful. Pushing changes..."
-            git push origin $TARGET_BRANCH
+            git push --force-with-lease origin $TARGET_BRANCH
           else
             echo "⚠️ Rebase conflict detected. Aborting and creating PR..."
             git rebase --abort
